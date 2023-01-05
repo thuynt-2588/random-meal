@@ -1,24 +1,35 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import axios from "axios";
+import { useEffect, useState } from "react";
+import MealContainer from "./components/MealContainer";
+import { IMeal } from "./types/meal";
+import "./index.css";
 
 function App() {
+  const baseURL = "https://www.themealdb.com/api/json/v1/1/random.php";
+  const [meal, setMeal] = useState<IMeal>();
+
+  const callRandomMeal = () => {
+    axios.get(baseURL).then((response) => {
+      setMeal(response.data.meals[0]);
+    });
+  };
+
+  useEffect(() => {
+    callRandomMeal();
+  }, []);
+
+  const handleRandomMeal = () => {
+    callRandomMeal();
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {meal && (
+        <MealContainer
+          meal={meal as IMeal}
+          onHandleRandomMeal={handleRandomMeal}
+        />
+      )}
     </div>
   );
 }
